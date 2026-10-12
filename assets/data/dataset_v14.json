@@ -1,0 +1,104 @@
+{
+  "schema version": 2,
+  "dataset version": "v14",
+  "drugs": [
+    {
+      "id": "d001",
+      "name": "Veloxamine",
+      "concentration": "50 mg/mL",
+      "route": "IV",
+      "doses": {
+        "dog": {"min": 5, "max": 10, "unit": "mg/kg"},
+        "cat": {"min": 2, "max": 4, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d002",
+      "name": "Tranzorel",
+      "concentration": "1 mg/mL",
+      "route": "IM",
+      "doses": {
+        "dog": {"min": 10, "max": 20, "unit": "mcg/kg"},
+        "cat": {"min": 5, "max": 10, "unit": "mcg/kg"}
+      }
+    },
+    {
+      "id": "d003",
+      "name": "Pirovane",
+      "concentration": "25 mg/mL",
+      "route": "PO",
+      "doses": {
+        "dog": {"min": 1, "max": 2, "unit": "mg/kg"},
+        "cat": null
+      }
+    },
+    {
+      "id": "d004",
+      "name": "Meloquin",
+      "concentration": "1.5 mg/mL",
+      "route": "PO",
+      "doses": {
+        "dog": {"min": 0.1, "max": 0.2, "unit": "mg/kg"},
+        "cat": null
+      }
+    },
+    {
+      "id": "d005",
+      "name": "Meloquin",
+      "concentration": "5 mg/mL",
+      "route": "SC",
+      "doses": {
+        "dog": {"min": 0.1, "max": 0.2, "unit": "mg/kg"},
+        "cat": {"min": 0.05, "max": 0.1, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d006",
+      "name": "Corvadil",
+      "concentration": "10 mg/mL",
+      "route": "IV",
+      "doses": {
+        "dog": {"min": 2, "max": 4, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d007",
+      "name": "Benzaprol",
+      "concentration": "10%",
+      "route": "IV",
+      "doses": {
+        "dog": {"min": 2, "max": 5, "unit": "mg/kg"},
+        "cat": {"min": 2, "max": 5, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d008",
+      "name": "Zentrafen",
+      "concentration": "100 mg/mL",
+      "route": "PO",
+      "max total mg": 400,
+      "doses": {
+        "dog": {"min": 10, "max": 15, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d009",
+      "name": "Quilomid",
+      "concentration": "0 mg/mL",
+      "route": "IV",
+      "doses": {
+        "dog": {"min": 1, "max": 3, "unit": "mg/kg"}
+      }
+    },
+    {
+      "id": "d010",
+      "name": "Dravexin",
+      "concentration": "20 mg/mL",
+      "route": "IM",
+      "doses": {
+        "dog": {"min": 2, "max": 4, "unit": "mg/kg"},
+        "feline": {"min": 1, "max": 2, "unit": "mg/kg"}
+      }
+    }
+  ]
+}

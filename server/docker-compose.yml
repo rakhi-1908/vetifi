@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15
+    environment:
+      POSTGRES_USER: vetifi_user
+      POSTGRES_PASSWORD: vetifi_password
+      POSTGRES_DB: vetifi_db
+    ports:
+      - "5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U vetifi_user -d vetifi_db"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  backend:
+    build: .
+    ports:
+      - "8000:8000"
+    environment:
+      DATABASE_URL: postgresql://vetifi_user:vetifi_password@db:5432/vetifi_db
+      ADMIN_KEY: ${ADMIN_KEY:?ADMIN_KEY must be set}
+      ED25519_PRIVATE_KEY: ${ED25519_PRIVATE_KEY:?ED25519_PRIVATE_KEY must be set}
+    depends_on:
+      db:
+        condition: service_healthy
+
+volumes:
+  pgdata:
