@@ -7,24 +7,105 @@
 
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 
 import 'package:vetifi/main.dart';
+import 'package:vetifi/models/drug_model.dart';
+import 'package:vetifi/services/database_service.dart';
+import 'package:vetifi/services/search_service.dart';
+
+const _seedDataset = '''
+{
+  "schema version": 2,
+  "dataset version": "v14",
+  "drugs": [
+    {
+      "id": "d001",
+      "name": "Veloxamine",
+      "concentration": "50 mg/mL",
+      "route": "IV",
+      "doses": {"dog": {"min": 5, "max": 10, "unit": "mg/kg"}}
+    }
+  ]
+}
+''';
 
 void main() {
-  testWidgets('Counter increments smoke test', (WidgetTester tester) async {
-    // Build our app and trigger a frame.
-    await tester.pumpWidget(const MyApp());
+  TestWidgetsFlutterBinding.ensureInitialized();
+  sqfliteFfiInit();
+  databaseFactory = databaseFactoryFfi;
 
-    // Verify that our counter starts at 0.
-    expect(find.text('0'), findsOneWidget);
-    expect(find.text('1'), findsNothing);
-
-    // Tap the '+' icon and trigger a frame.
-    await tester.tap(find.byIcon(Icons.add));
+  testWidgets('VetifiApp opens the local clinical drug search', (
+    WidgetTester tester,
+  ) async {
+    final databaseService = DatabaseService(
+      databasePath: inMemoryDatabasePath,
+      initialDatasetJson: _seedDataset,
+    );
+    await tester.pumpWidget(
+      VetifiApp(databaseService: databaseService, enableBackgroundSync: false),
+    );
     await tester.pump();
 
-    // Verify that our counter has incremented.
-    expect(find.text('0'), findsNothing);
-    expect(find.text('1'), findsOneWidget);
+    expect(find.text('Vetifi'), findsOneWidget);
+    expect(find.text('Clinical drug search'), findsOneWidget);
+    expect(find.byType(TextField), findsOneWidget);
+
+    await tester.pumpWidget(const SizedBox.shrink());
+    await tester.runAsync(databaseService.close);
+  });
+
+  testWidgets('drug results are tappable and open drug dose details', (
+    WidgetTester tester,
+  ) async {
+    const drug = Drug(
+      id: 'd001',
+      name: 'Veloxamine',
+      concentration: '50 mg/mL',
+      route: 'IV',
+      doses: {'dog': DoseRange(min: 5, max: 10, unit: 'mg/kg')},
+      criRanges: [],
+      maxTotalMg: null,
+      isWithdrawn: false,
+    );
+    final searchResult = DrugSearchResult(
+      id: drug.id,
+      name: drug.name,
+      isBenchmark: false,
+      matchType: SearchMatchType.exact,
+      data: {
+        'id': drug.id,
+        'name': drug.name,
+        'concentration': drug.concentration,
+        'route': drug.route,
+      },
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: Builder(
+            builder: (context) => DrugResultCard(
+              result: searchResult,
+              onTap: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute<void>(
+                    builder: (context) => const DrugDetailsScreen(drug: drug),
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.byType(ListTile));
+    for (var frame = 0; frame < 20; frame++) {
+      await tester.pump(const Duration(milliseconds: 25));
+    }
+    expect(find.text('Dose ranges'), findsOneWidget);
+    expect(find.text('Dog'), findsOneWidget);
+    expect(find.text('5–10 mg/kg'), findsOneWidget);
   });
 }
